@@ -7,13 +7,13 @@ import java.time.LocalDate
  */
 data class VisitSummary(
 	val petName: String,
-	val date: LocalDate,
+	val visitDate: LocalDate,
 	val description: String,
 ) {
 
 	val label: String
 		get() = "$petName: $description"
 
-	fun isWithinDays(days: Long, today: LocalDate): Boolean = !date.isAfter(today.plusDays(days))
+	fun isWithinDays(days: Long, today: LocalDate): Boolean = !visitDate.isAfter(today.plusDays(days))
 
 }
