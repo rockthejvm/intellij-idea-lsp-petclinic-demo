@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.Assert;
@@ -76,7 +77,7 @@ class PetController {
 	@ModelAttribute("pet")
 	@NullMarked
 	public Pet findPet(@PathVariable("ownerId") int ownerId,
-			@PathVariable(name = "petId", required = false) Integer petId) {
+			@PathVariable(name = "petId", required = false) @Nullable Integer petId) {
 
 		if (petId == null) {
 			return new Pet();
@@ -85,7 +86,12 @@ class PetController {
 		Optional<Owner> optionalOwner = this.owners.findById(ownerId);
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
-		return owner.getPet(petId);
+		Pet pet = owner.getPet(petId);
+		if (pet == null) {
+			throw new IllegalArgumentException(
+					"Pet with id " + petId + " not found for owner with id " + ownerId + ".");
+		}
+		return pet;
 	}
 
 	@InitBinder("owner")

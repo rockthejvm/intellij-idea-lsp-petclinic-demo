@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -47,7 +48,7 @@ class VisitController {
 
 	private final VisitNotifier notifier;
 
-	public VisitController(OwnerRepository owners, VisitNotifier notifier) {
+	public VisitController(OwnerRepository owners, @Qualifier("emailVisitNotifier") VisitNotifier notifier) {
 		this.owners = owners;
 		this.notifier = notifier;
 	}
