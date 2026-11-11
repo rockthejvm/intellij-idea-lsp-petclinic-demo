@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
+import org.springframework.samples.petclinic.notification.VisitNotifier;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -44,8 +45,11 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	public VisitController(OwnerRepository owners) {
+	private final VisitNotifier notifier;
+
+	public VisitController(OwnerRepository owners, VisitNotifier notifier) {
 		this.owners = owners;
+		this.notifier = notifier;
 	}
 
 	@InitBinder
@@ -107,6 +111,7 @@ class VisitController {
 
 		owner.addVisit(petId, visit);
 		this.owners.save(owner);
+		this.notifier.visitBooked(owner, visit);
 		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
 		return "redirect:/owners/{ownerId}";
 	}
