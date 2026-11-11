@@ -40,6 +40,21 @@
 
   <br />
   <br />
+  <h2>Upcoming visits</h2>
+
+  <table class="table table-striped" id="upcoming-visits">
+    <tr>
+      <th>Pet</th>
+      <th>Date</th>
+      <th>Description</th>
+    </tr>
+    <tr th:each="v : ${upcomingVisits}">
+      <td th:text="${v.petName}"></td>
+      <td th:text="${#temporals.format(v.date, 'yyyy-MM-dd')}"></td>
+      <td th:text="${v.description}"></td>
+    </tr>
+  </table>
+
   <br />
   <h2 th:text="#{petsAndVisits}">Pets and Visits</h2>
 

@@ -15,9 +15,13 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -182,6 +186,21 @@ class OwnerController {
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
 		mav.addObject(owner);
+
+		// Upcoming visits for the owner page
+		List<VisitSummary> upcoming = new ArrayList<>();
+		for (Pet pet : owner.getPets()) {
+			for (Visit visit : pet.getVisits()) {
+				if (visit.getDate() != null && visit.getDate().isAfter(LocalDate.now().minusDays(1))) {
+					String description = visit.getDescription();
+					String name = pet.getName();
+					upcoming.add(new VisitSummary(name, visit.getDate(), description == null ? "" : description));
+				}
+			}
+		}
+		upcoming.sort(Comparator.comparing(VisitSummary::getDate));
+		List<VisitSummary> result = upcoming.size() > 5 ? upcoming.subList(0, 5) : upcoming;
+		mav.addObject("upcomingVisits", result);
 		return mav;
 	}
 
