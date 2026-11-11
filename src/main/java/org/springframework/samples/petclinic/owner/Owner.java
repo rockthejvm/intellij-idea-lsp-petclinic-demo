@@ -15,7 +15,9 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,6 +158,30 @@ public class Owner extends Person {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the visits of all this owner's pets between two dates, both included,
+	 * sorted by date.
+	 * @param from first day of the range, included
+	 * @param to last day of the range, included
+	 * @return the matching visits, oldest first
+	 */
+	public List<Visit> visitsBetween(LocalDate from, LocalDate to) {
+		List<Visit> result = new ArrayList<>();
+		for (Pet pet : getPets()) {
+			for (Visit visit : pet.getVisits()) {
+				if (visit.getDate() != null && inRange(visit.getDate(), from, to)) {
+					result.add(visit);
+				}
+			}
+		}
+		result.sort(Comparator.comparing(Visit::getDate));
+		return result;
+	}
+
+	private static boolean inRange(LocalDate date, LocalDate from, LocalDate to) {
+		return date.isAfter(from) && date.isBefore(to);
 	}
 
 	@Override

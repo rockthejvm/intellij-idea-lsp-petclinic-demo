@@ -15,8 +15,11 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +49,32 @@ class OwnerTests {
 		owner.addPet(pet);
 
 		assertEquals(1, owner.getPets().size());
+	}
+
+	@Test
+	void visitsBetweenIncludesBothEnds() {
+		Owner owner = new Owner();
+		Pet pet = new Pet();
+		pet.setId(7);
+		pet.setName("Samantha");
+		pet.addVisit(visit(LocalDate.of(2030, 3, 9), "too early"));
+		pet.addVisit(visit(LocalDate.of(2030, 3, 10), "annual checkup"));
+		pet.addVisit(visit(LocalDate.of(2030, 3, 11), "follow-up"));
+		pet.addVisit(visit(LocalDate.of(2030, 3, 12), "dental cleaning"));
+		pet.addVisit(visit(LocalDate.of(2030, 3, 13), "too late"));
+		owner.addPet(pet);
+
+		var visits = owner.visitsBetween(LocalDate.of(2030, 3, 10), LocalDate.of(2030, 3, 12));
+
+		assertThat(visits).extracting(Visit::getDescription)
+			.containsExactly("annual checkup", "follow-up", "dental cleaning");
+	}
+
+	private static Visit visit(LocalDate date, String description) {
+		Visit visit = new Visit();
+		visit.setDate(date);
+		visit.setDescription(description);
+		return visit;
 	}
 
 }
