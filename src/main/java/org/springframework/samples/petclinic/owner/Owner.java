@@ -181,7 +181,7 @@ public class Owner extends Person {
 	}
 
 	private static boolean inRange(LocalDate date, LocalDate from, LocalDate to) {
-		return date.isAfter(from) && date.isBefore(to);
+		return !date.isBefore(from) && !date.isAfter(to);
 	}
 
 	@Override
